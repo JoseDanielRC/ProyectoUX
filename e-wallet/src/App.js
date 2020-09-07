@@ -48,7 +48,6 @@ class App extends Component {
                     <p class="mt-3 font-weight-normal">Don't have an account? <a href="#"><strong>Register Now</strong></a></p>
                 </form>
             </div>
-
         );
     }
 }
