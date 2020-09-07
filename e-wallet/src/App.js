@@ -43,7 +43,7 @@ class App extends Component {
                         </div>
                         <a href="#">Forgot Password?</a>
                     </div>
-                    <button type="button" class="btn mt-5 rounded-pill btn-lg btn-custom btn-block text-uppercase" onClick={() => {alert("Usuario: " + this.state.username+ ", Password: " + this.state.password);}} >Log in
+                    <button type="submit" class="btn mt-5 rounded-pill btn-lg btn-custom btn-block text-uppercase" onClick={() => {alert("Usuario: " + this.state.username+ ", Password: " + this.state.password);}} >Log in
                     </button>
                     <p class="mt-3 font-weight-normal">Don't have an account? <a href="#"><strong>Register Now</strong></a></p>
                 </form>
