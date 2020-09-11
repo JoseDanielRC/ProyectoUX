@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import fire from './Fire';
 import Tarjeta from './Tarjeta';
+import CardSwiper from './CardSwiper.js';
 function SubmissionBanner(props) {
     if (!props.submit) {
         return null;
@@ -8,11 +9,19 @@ function SubmissionBanner(props) {
 
     return (
         <div >
-            <Tarjeta/>
+            <Tarjeta />
+        </div>
+    );
+}
+function Tarjetas(props) {
+    return (
+        <div >
+            <CardSwiper />
         </div>
     );
 }
 class Home extends Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -25,29 +34,36 @@ class Home extends Component {
     _onButtonClick() {
         this.setState(prevState => ({
             showComponent: true,
-            shouldShowButton : !prevState.shouldShowButton
+            shouldShowButton: !prevState.shouldShowButton
         }));
     }
     logout() {
         fire.auth().signOut();
     }
+
     render() {
 
         return (
 
             <div >
-                <form >
-                    <h1 class="mb-5 font-weight-light text-uppercase text-center">Ha iniciado sesion</h1>
-                    <SubmissionBanner submit={this.state.shouldShowButton} />
-                    <button type="button" class="btn mt-5 rounded-pill btn-lg btn-custom btn-block text-uppercase" onClick={this._onButtonClick} >
-                    {this.state.shouldShowButton ? "Volver" : "Agregar Tarjeta"}
-                 </button>
-                    <button type="submit" class="btn mt-5 rounded-pill btn-lg btn-custom btn-block text-uppercase" onClick={this.logout} >Logout
-                 </button>
-                </form>
-            </div>
-
+                <div>
+                    <Tarjetas />
+                </div>
+                <div style={{ 'padding-top':'30px' }}>
+                    <form >
+                        <h1 class="mb-5 font-weight-light text-uppercase text-center">Ha iniciado sesion</h1>
+                        <SubmissionBanner submit={this.state.shouldShowButton} />
+                        <button type="button" class="btn mt-5 rounded-pill btn-lg btn-custom btn-block text-uppercase" onClick={this._onButtonClick} >
+                            {this.state.shouldShowButton ? "Volver" : "Agregar Tarjeta"}
+                        </button>
+                        <button type="submit" class="btn mt-5 rounded-pill btn-lg btn-custom btn-block text-uppercase" onClick={this.logout} >
+                            Logout
+                            </button>
+                    </form>
+                </div>
+            </div >
         );
+
 
     }
 
