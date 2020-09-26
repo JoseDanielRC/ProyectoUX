@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import fire from './Fire';
 import Tarjeta from './Tarjeta';
 import CardSwiper from './CardSwiper.js';
-import Card from './Card'
-import { Form, Field } from 'react-final-form'
+import Card from './Card';
+import "./Box.css";
+import Amigos from './Amigos';
 function SubmissionBanner(props) {
     if (!props.submit) {
         return null;
@@ -22,33 +23,110 @@ function Tarjetas(props) {
         </div>
     );
 }
-/*
-                            <div style={{ 'padding-top': '30px' }}>
-                                {this.state.shouldShowButton ? <SubmissionBanner /> : < Tarjetas />}
-                            </div>
-                            <SubmissionBanner submit={this.state.shouldShowButton} /> */
+const cardInfo = [
+    {
+        number: "3786486895872356",
+        name: "Jasser Ramos",
+        expiry: "02/23",
+        cvc: "333"
+    },
+    {
+        number: "4286486895872356",
+        name: "Jasser Ramos",
+        expiry: "02/23",
+        cvc: "333"
+    },
+    {
+        number: "5586486895872356",
+        name: "Jasser Ramos",
+        expiry: "02/23",
+        cvc: "333"
+    }, {
+        number: "3786486895872356",
+        name: "Jasser Ramos",
+        expiry: "02/23",
+        cvc: "333"
+    },
+    {
+        number: "4286486895872356",
+        name: "Jasser Ramos",
+        expiry: "02/23",
+        cvc: "333"
+    },
+    {
+        number: "5586486895872356",
+        name: "Jasser Ramos",
+        expiry: "02/23",
+        cvc: "333"
+    }, {
+        number: "3786486895872356",
+        name: "Jasser Ramos",
+        expiry: "02/23",
+        cvc: "333"
+    },
+    {
+        number: "4286486895872356",
+        name: "Jasser Ramos",
+        expiry: "02/23",
+        cvc: "333"
+    },
+    {
+        number: "5586486895872356",
+        name: "Jasser Ramos",
+        expiry: "02/23",
+        cvc: "333"
+    }];
+const renderCard = (card, index) => {
+    return (
+        <Card
+            style={{ width: "1rem" }}
+            key={index}
+            className="box"
+            number={card.number}
+            name={card.name}
+            expiry={card.expiry}
+            cvc={card.cvc}
+        />
+    );
+};
 class Home extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             showComponent: false,
-            shouldShowButton: false
+            shouldShowButton: false,
+            showAmigos: false,
+            regresasHome: true
         };
         this.logout = this.logout.bind(this);
         this._onButtonClick = this._onButtonClick.bind(this);
         this.HomeClick = this.HomeClick.bind(this);
+        this._onButtonClick2 = this._onButtonClick2.bind(this);
     }
+
     _onButtonClick() {
         this.setState(prevState => ({
             showComponent: true,
-            shouldShowButton: !prevState.shouldShowButton
+            shouldShowButton: !prevState.shouldShowButton,
+            showAmigos: false,
+        }));
+    }
+
+    _onButtonClick2() {
+        this.setState(prevState => ({
+            showComponent: true,
+            shouldShowButton: false,
+            showAmigos: true,
+            regresasHome: false
         }));
     }
     HomeClick() {
         this.setState(({
             showComponent: false,
-            shouldShowButton: false
+            shouldShowButton: false,
+            showAmigos: false,
+            regresasHome: true
         }));
 
     }
@@ -97,7 +175,7 @@ class Home extends Component {
                                             <a class="nav-link" href="#" onClick={this._onButtonClick}>Agregar Tarjeta</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="#">Amigos</a>
+                                            <a class="nav-link" href="#" onClick={this._onButtonClick2}>Amigos</a>
                                         </li>
                                     </ul>
                                     <ul class="navbar-nav">
@@ -107,47 +185,22 @@ class Home extends Component {
                                     </ul>
                                 </div>
                             </nav>
-                            <div className="container-fluid d-flex justify-content-center">
-                                <div className="row " style={{ 'padding-top': '30px' }}>
-                                    <div className="col-md-6">
-                                        <Card
-                                            number={"3786486895872356"}
-                                            name={"Jasser Ramos"}
-                                            expiry={"02/23"}
-                                            cvc={"333"}
-                                        />
-                                    </div>
-                                    <div className="col-md-6">
-                                        <Card
-                                            number={"4286486895872356"}
-                                            name={"Jasser Ramos"}
-                                            expiry={"02/23"}
-                                            cvc={"333"}
-                                        />
-                                    </div>
-                                    <div className="col-md-6">
-                                        <Card
-                                            number={"4286486895872356"}
-                                            name={"Jasser Ramos"}
-                                            expiry={"02/23"}
-                                            cvc={"333"}
-                                        />
-                                    </div>
-                                </div>
+                            <div style={{ 'padding-top': '30px' }}>
+                                {this.state.shouldShowButton ? (
+                                
+                                    <SubmissionBanner />
+                                ) : (
+                                        null
+                                    )}
                             </div>
                             <div style={{ 'padding-top': '30px' }}>
-                                {this.state.shouldShowButton ? <SubmissionBanner /> : <Tarjetas />}
+                                {this.state.showAmigos ? (
+
+                                    <Amigos />
+                                ) : null}
                             </div>
+                            {this.state.regresasHome && (!this.state.shouldShowButton && !this.state.showAmigos) ? <div className="grid">{cardInfo.map(renderCard)}</div> : null}
                             <SubmissionBanner submit={this.state.shouldShowButton} />
-                            <div class="col-md-12 text-center">
-                                <button type="button" class="btn mt-5 rounded-pill btn-lg btn-custom text-uppercase" onClick={this._onButtonClick} >
-                                    {this.state.shouldShowButton ? "Volver" : "Agregar Tarjeta"}
-                                </button>
-                                <div></div>
-                                <button type="submit" class="btn mt-5 rounded-pill btn-lg btn-custom text-uppercase" onClick={this.logout} >
-                                    Logout
-                            </button>
-                            </div>
                         </form>
                     </div>
                 </body>
