@@ -19,7 +19,6 @@ const onSubmit = async values => {
 const Tarjeta = () => (
   <div>
     <Styles>
-
       <h1>🏁Agregar Tarjeta</h1>
       <h2>Ingrese datos</h2>
       <Form
