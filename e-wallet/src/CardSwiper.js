@@ -91,12 +91,13 @@ class CardSwiper extends Component {
             <div class="carousel slide" data-ride="carousel" style={CardSwiper.CONTAINER_STYLE}>
                 <Carousel width="400px" style={{ margin: -1 }} showArrows={true} showThumbs={false} showStatus={false}>
                     <div>
-                        <img style={{ 'width': '400px', 'height': '200px', position: 'relative' }} src="https://purepng.com/public/uploads/thumbnail/purepng.com-credit-cardobjectsdiamond-ringcardobjectbankcreditatmdebit-631522323297evisb.png" >
-                        </img>
+                        <img style={{ 'width': '400px', 'height': '200px', position: 'relative' }} >
+                           </img>
                         <p className="legend">Tarjeta 1</p>
                     </div>
                     <div>
-                        <img style={{ 'width': '400px', 'height': '200px', position: 'relative' }} src="https://purepng.com/public/uploads/thumbnail/purepng.com-credit-cardobjectsdiamond-ringcardobjectbankcreditatmdebit-631522323297evisb.png" >
+                        <img style={{ 'width': '400px', 'height': '200px', position: 'relative' }}>
+                            
                         </img>
                         <p className="legend">Tarjeta 2</p>
                     </div>
