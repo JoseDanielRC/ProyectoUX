@@ -11,9 +11,15 @@ import {
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-const onSubmit = async values => {
+const record = async cardInfo => {
+  let name = cardInfo.name;
+  let number = cardInfo.number;
+  let expiry = cardInfo.expiry;
+  let cvc = cardInfo.cvc;
+}
+const onSubmit = async record => {
   await sleep(300)
-  window.alert(JSON.stringify(values, 0, 2))
+  window.alert(record.number)
 }
 
 const Tarjeta = () => (
@@ -31,6 +37,12 @@ const Tarjeta = () => (
           values,
           active
         }) => {
+          const cardInfo = {
+            number: values.number,
+            name: values.nambe,
+            expiry: values.expiry,
+            cvc: values.cvc
+          }
           return (
             <form onSubmit={handleSubmit}>
               <Card
@@ -97,5 +109,6 @@ const Tarjeta = () => (
     </Styles>
   </div>
 )
+
 
 export default Tarjeta;

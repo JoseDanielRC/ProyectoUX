@@ -4,14 +4,6 @@ import Home from './Home';
 import Login from './Login';
 import fire from './Fire';
 const App = () => {
-
-    /*constructor() {
-        super();
-        this.state = ({
-            username: null,
-        });
-        this.authListener = this.authListener.bind(this);
-    }*/
     const [user, setUser] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
