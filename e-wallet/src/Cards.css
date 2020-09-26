@@ -27,6 +27,8 @@ body {
 }
 
 .carousel .slide img {
+  display: flex;
+  flex-wrap: wrap;
   max-height: 300px;  /* change this to whatever you want */
   width: 400px;
   background-color: #ccc;

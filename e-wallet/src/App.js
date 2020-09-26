@@ -1,37 +1,106 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import './App.css';
 import Home from './Home';
 import Login from './Login';
 import fire from './Fire';
-class App extends Component {
+const App = () => {
 
-    constructor() {
+    /*constructor() {
         super();
         this.state = ({
             username: null,
         });
         this.authListener = this.authListener.bind(this);
+    }*/
+    const [user, setUser] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [hasAccount, setHasAccount] = useState(false);
+
+    const clearInputs = () => {
+        setEmail("");
+        setPassword("");
     }
-    componentDidMount() {
-        this.authListener();
+    const clearErrors = () => {
+        setEmailError("");
+        setPasswordError("");
     }
-    authListener() {
-        fire.auth().onAuthStateChanged((username) => {
-            if (username) {
-                this.setState({ username });
-                // localStorage.setItem('user',user.uid);
+    const handleLogin = () => {
+        document.getElementById("titulo").innerHTML="Iniciar Sesion";
+        clearErrors();
+        fire
+            .auth()
+            .signInWithEmailAndPassword(email, password)
+            .catch((err) => {
+                switch (err.code) {
+                    case "auth/invalid-email":
+                    case "auth/user-disabled":
+                    case "auth/user-not-found":
+                        setEmailError(err.message);
+                        break;
+                    case "auth/wrong-password":
+                        setPasswordError(err.message);
+                        break;
+                }
+            })
+    }
+    const handleSignup = () => {
+        document.getElementById("titulo").innerHTML="Crear Cuenta";
+        clearErrors();
+        fire
+            .auth()
+            .createUserWithEmailAndPassword(email, password)
+            .catch((err) => {
+                switch (err.code) {
+                    case "auth/email-already-in-use":
+                    case "auth/invalid-email":
+                        setEmailError(err.message);
+                        break;
+                    case "auth/weak-password":
+                        setPasswordError(err.message);
+                        break;
+                }
+            })
+    }
+    const handleLogout = () => {
+        fire.auth().signOut()
+    }
+    const authListener = () => {
+        fire.auth().onAuthStateChanged((user) => {
+            if (user) {
+                clearInputs();
+                setUser(user);
             } else {
-                this.setState({ username: null });
+                setUser("");
                 // localStorage.removeItem('user');
             }
         })
     }
-
-    render() {
-        return (
-            <div>{this.state.username ? (<Home />) : (<Login />)}</div>
-        );
-    }
+    useEffect(() => {
+        authListener();
+    }, [])
+    return (
+        <div className="App">
+            {user ? (
+                
+                <Home />
+            ) : (
+                    <Login
+                        email={email}
+                        setEmail={setEmail}
+                        password={password}
+                        setPassword={setPassword}
+                        handleLogin={handleLogin}
+                        handleSignup={handleSignup}
+                        hasAccount={hasAccount}
+                        setHasAccount={setHasAccount}
+                        emailError={emailError}
+                        passwordError={passwordError}
+                    />
+                )}
+        </div>
+    );
 }
-
 export default App;
