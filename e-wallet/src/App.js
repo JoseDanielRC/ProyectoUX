@@ -1,55 +1,106 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import React, { Component, useEffect, useState } from 'react';
 import './App.css';
-import { Alert } from 'reactstrap';
-class App extends Component {
-    constructor() {
-        super();
-        this.state = {
-            username: '',
-            password: ''
-        }
-    }
-    handleUser(event) {
-        this.setState({
-            username: event.target.value
-        })
-    }
-    handlePassword(event) {
-        this.setState({
-            password: event.target.value
-        })
-    }
-    togglePopup() {
-        this.setState({
-            username: !this.state.username
-        });
-    }
-    render() {
-        return (
-            <div class="d-flex justify-content-center align-items-center login-container">
-                <form class="login-form text-center">
-                    <h1 class="mb-5 font-weight-light text-uppercase">Login</h1>
-                    <div class="form-group">
-                        <input type="text" id="user" class="form-control rounded-pill form-control-lg" placeholder="Username" onChange={this.handleUser.bind(this)}></input>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" id="password" class="form-control rounded-pill form-control-lg" placeholder="Password" onChange={this.handlePassword.bind(this)}></input>
-                    </div>
-                    <div class="forgot-link form-group d-flex justify-content-between align-items-center">
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="remember"></input>
-                            <label class="form-check-label" for="remember">Remember Password</label>
-                        </div>
-                        <a href="#">Forgot Password?</a>
-                    </div>
-                    <button type="submit" class="btn mt-5 rounded-pill btn-lg btn-custom btn-block text-uppercase" onClick={() => { alert("Usuario: " + this.state.username + ", Password: " + this.state.password); }} >Log in
-                    </button>
-                    <p class="mt-3 font-weight-normal">Don't have an account? <a href="#"><strong>Register Now</strong></a></p>
-                </form>
-            </div>
-        );
-    }
-}
+import Home from './Home';
+import Login from './Login';
+import fire from './Fire';
+const App = () => {
 
+    /*constructor() {
+        super();
+        this.state = ({
+            username: null,
+        });
+        this.authListener = this.authListener.bind(this);
+    }*/
+    const [user, setUser] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [hasAccount, setHasAccount] = useState(false);
+
+    const clearInputs = () => {
+        setEmail("");
+        setPassword("");
+    }
+    const clearErrors = () => {
+        setEmailError("");
+        setPasswordError("");
+    }
+    const handleLogin = () => {
+        document.getElementById("titulo").innerHTML="Iniciar Sesion";
+        clearErrors();
+        fire
+            .auth()
+            .signInWithEmailAndPassword(email, password)
+            .catch((err) => {
+                switch (err.code) {
+                    case "auth/invalid-email":
+                    case "auth/user-disabled":
+                    case "auth/user-not-found":
+                        setEmailError(err.message);
+                        break;
+                    case "auth/wrong-password":
+                        setPasswordError(err.message);
+                        break;
+                }
+            })
+    }
+    const handleSignup = () => {
+        document.getElementById("titulo").innerHTML="Crear Cuenta";
+        clearErrors();
+        fire
+            .auth()
+            .createUserWithEmailAndPassword(email, password)
+            .catch((err) => {
+                switch (err.code) {
+                    case "auth/email-already-in-use":
+                    case "auth/invalid-email":
+                        setEmailError(err.message);
+                        break;
+                    case "auth/weak-password":
+                        setPasswordError(err.message);
+                        break;
+                }
+            })
+    }
+    const handleLogout = () => {
+        fire.auth().signOut()
+    }
+    const authListener = () => {
+        fire.auth().onAuthStateChanged((user) => {
+            if (user) {
+                clearInputs();
+                setUser(user);
+            } else {
+                setUser("");
+                // localStorage.removeItem('user');
+            }
+        })
+    }
+    useEffect(() => {
+        authListener();
+    }, [])
+    return (
+        <div className="App">
+            {user ? (
+                
+                <Home />
+            ) : (
+                    <Login
+                        email={email}
+                        setEmail={setEmail}
+                        password={password}
+                        setPassword={setPassword}
+                        handleLogin={handleLogin}
+                        handleSignup={handleSignup}
+                        hasAccount={hasAccount}
+                        setHasAccount={setHasAccount}
+                        emailError={emailError}
+                        passwordError={passwordError}
+                    />
+                )}
+        </div>
+    );
+}
 export default App;

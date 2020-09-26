@@ -1,5 +1,6 @@
 {
   "projects": {
+<<<<<<< HEAD
 <<<<<<< Updated upstream
     "default": "e-wallet-51d51",
     "e-wallet": "e-wallet-51d51"
@@ -10,3 +11,8 @@
   }
 }
 >>>>>>> Stashed changes
+=======
+    "default": "e-wallet-51d51"
+  }
+}
+>>>>>>> c4e4de0d51c870ad4af9217b31b1b60bb310fe3d
