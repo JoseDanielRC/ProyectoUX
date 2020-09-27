@@ -1,85 +1,79 @@
 import React, { Component, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Button } from 'reactstrap'
-import { Modal, ModalBody, ModalHeader, ModalFooter } from 'reactstrap'
+import fire from './Fire';
+import Top from './Top';
+import './Amigos.css'
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useCollectionData } from 'react-firebase-hooks/firestore';
 //add friend
 // transfer
 //lista de 
-/*function VentanaAgregar() {
+function App() {
+    const [user] = useAuthState(fire.auth());
+
     return (
-        <Modal isOpen={modal}>
-            <ModalHeader>Modal title</ModalHeader>
-            <ModalBody>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </ModalBody>
-            <ModalFooter>
-                <Button color="primary">Do Something</Button>{' '}
-                <Button color="secondary">Cancel</Button>
-            </ModalFooter>
-        </Modal>
+        <div className="App">
+
+            <div>
+                <Top />
+            </div>
+            <section>
+                <Chat />
+            </section>
+        </div>
     );
 }
-*/
-class Amigos extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            showComponent: false,
-            shouldShowButton: false
-        };
-        this._onButtonClick = this._onButtonClick.bind(this);
+function Chat() {
+    const messagesRef = fire.firestore().collection('messages');
+    const query = messagesRef.orderBy('createdAt').limit(25);
+    const [messages] = useCollectionData(query, { idField: 'id' });
+    const [formValue, setFormValue] = useState('');
+
+    const sendMessage = async (e) => {
+        e.preventDefault();
+        const { uid, email } = fire.auth().currentUser;
+        await messagesRef.add({
+            text: formValue,
+            createdAt: new Date(),
+            uid,
+            email
+        });
+        setFormValue('');
     }
-    _onButtonClick() {
-        this.setState(prevState => ({
-            showComponent: true,
-            shouldShowButton: !prevState.shouldShowButton
-        }));
-    }
-    static get DIV_STYLE() {
-        return {
-            display: 'flex',
-            'flex-wrap': 'wrap',
-            'margin': 0
-        };
-    }
-    static get BACK_STYLE() {
-        return {
-            background: 'white',
-            margin: 0,
-            height: '100%'
-        };
-    }
-    render() {
-        return (
-            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-                <ol class="carousel-indicators">
-                    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-                </ol>
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img class="d-block w-100" style={{ "max-width":"200px"," min-height": "400px"}} src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Google_Contacts_icon.svg/1200px-Google_Contacts_icon.svg.png" alt="First slide"></img>
-                    </div>
-                    <div class="carousel-item">
-                        <img class="d-block w-100" src="..." alt="Second slide"></img>
-                    </div>
-                    <div class="carousel-item">
-                        <img class="d-block w-100" src="..." alt="Third slide"></img>
-                    </div>
+
+    return (
+
+        <>
+            <div>
+                <div >
+                    {messages && messages.map(msg => <ChatMessage key={msg.id} message={msg} email={fire.auth().currentUser.email} />)}
+                    <form color="black" onSubmit={sendMessage}>
+                        <div>
+                            <input value={formValue} onChange={(e) => setFormValue(e.target.value)} />
+                            <button class="btn btn-secondary btn-rounded" type="submit">Send</button>
+                        </div>
+                    </form>
                 </div>
-                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                </a>
             </div>
-        );
-    }
-
+        </>
+    )
 }
-export default Amigos;
+
+function ChatMessage(props) {
+
+    const { text, uid, email } = props.message;
+    const messageClass = uid === fire.auth().currentUser.uid ? 'sent' : 'recieved';
+    return (
+        <div className="messages-box">
+            <div className="img-profile">
+                <img className="avatar" src="https://www.iconfinder.com/data/icons/fillies-small/64/id-card-512.png" alt="" /> <strong>{email}</strong>
+            </div>
+            <div className="message-text">
+                <p>{text}</p>
+            </div>
+
+        </div>
+    )
+}
+export default App;

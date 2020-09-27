@@ -1,28 +1,9 @@
 import React, { Component } from 'react';
 import fire from './Fire';
 import Tarjeta from './Tarjeta';
-import CardSwiper from './CardSwiper.js';
 import Card from './Card';
 import "./Box.css";
 import Amigos from './Amigos';
-function SubmissionBanner(props) {
-    if (!props.submit) {
-        return null;
-    }
-
-    return (
-        <div >
-            <Tarjeta />
-        </div>
-    );
-}
-function Tarjetas(props) {
-    return (
-        <div >
-            <CardSwiper />
-        </div>
-    );
-}
 const cardInfo = [
     {
         number: "3786486895872356",
@@ -89,15 +70,17 @@ const renderCard = (card, index) => {
         />
     );
 };
+
 class Home extends Component {
 
-    constructor(props) {
-        super(props);
+    constructor() {
+        super();
         this.state = {
             showComponent: false,
             shouldShowButton: false,
             showAmigos: false,
-            regresasHome: true
+            regresasHome: true,
+            tarjetas: null
         };
         this.logout = this.logout.bind(this);
         this._onButtonClick = this._onButtonClick.bind(this);
@@ -122,6 +105,7 @@ class Home extends Component {
         }));
     }
     HomeClick() {
+
         this.setState(({
             showComponent: false,
             shouldShowButton: false,
@@ -154,9 +138,7 @@ class Home extends Component {
         };
     }
     render() {
-
         return (
-
             <div >
                 <body class={Home.BACK_STYLE}>
                     <div >
@@ -180,15 +162,15 @@ class Home extends Component {
                                     </ul>
                                     <ul class="navbar-nav">
                                         <li class="nav-item pull-right">
-                                            <a href="#" class="nav-link pull-right" style={{ 'color': 'white' }} onClick={this.logout}><strong>Logout</strong></a>
+                                            <a href="#" class="nav-link pull-right" style={{ 'color': 'white' }} onClick={this.logout}><strong>{this.props.email}   Logout</strong></a>
                                         </li>
                                     </ul>
                                 </div>
                             </nav>
                             <div style={{ 'padding-top': '30px' }}>
                                 {this.state.shouldShowButton ? (
-                                
-                                    <SubmissionBanner />
+
+                                    <Tarjeta />
                                 ) : (
                                         null
                                     )}
@@ -200,7 +182,6 @@ class Home extends Component {
                                 ) : null}
                             </div>
                             {this.state.regresasHome && (!this.state.shouldShowButton && !this.state.showAmigos) ? <div className="grid">{cardInfo.map(renderCard)}</div> : null}
-                            <SubmissionBanner submit={this.state.shouldShowButton} />
                         </form>
                     </div>
                 </body>
