@@ -13,7 +13,7 @@ const App = () => {
     const [hasAccount, setHasAccount] = useState(false);
     const [cards, setCards] = useState([]);
     const [docid, setDocid] = useState('');
-    const tarjetasdb = [];
+    var tarjetasdb = [];
     const clearInputs = () => {
         setEmail("");
         setPassword("");
@@ -44,9 +44,10 @@ const App = () => {
                 cargarTarjetas();
             })
     }
-    const cargarTarjetas = () => {
+    const cargarTarjetas = async () => {
         let x = 1;
-        fire.firestore().collection('users').where("email", "==", email).get().then(DocumentSnapshot => {
+        tarjetasdb = [];
+        await fire.firestore().collection('users').where("email", "==", email).get().then(DocumentSnapshot => {
             DocumentSnapshot.docs.forEach(doc => {
                 if (doc.exists) {
                     doc.data().tarjetas.forEach(tar => {
@@ -108,32 +109,51 @@ const App = () => {
     const handleLogout = () => {
         fire.auth().signOut()
     }
-    const authListener = () => {
-        fire.auth().onAuthStateChanged((user) => {
+    const authListener = async () => {
+        await fire.auth().onAuthStateChanged((user) => {
             if (user) {
+                tarjetasdb = [];
                 clearInputs();
                 setUser(user);
-                cargarTarjetas();
+                alert("UID: " + user.uid);
+                fire.firestore().collection('users').where("id", "==", user.uid).get().then(DocumentSnapshot => {
+                    DocumentSnapshot.docs.forEach(doc => {
+                        if (doc.exists) {
+                            doc.data().tarjetas.forEach(tar => {
+                                if (tar != null) {
+                                    const name = tar.name;
+                                    const number = tar.number;
+                                    const expiry = tar.expiry;
+                                    const cvc = tar.cvc;
+                                    const obj = {
+                                        'name': name,
+                                        'expiry': expiry,
+                                        'number': number,
+                                        'cvc': cvc
+                                    }
+                                    tarjetasdb.push(obj);
+                                }
+                            });
+                            setCards(tarjetasdb);
+                            setDocid(doc.id)
+                        } else {
+                            alert('no existeeee');
+                        }
+                    })
+                });
             } else {
                 setUser("");
+                alert("nel");
                 // localStorage.removeItem('user');
             }
         })
     }
     useEffect(() => {
         authListener();
-        const fetchData = async () => {
-            fire.firestore().collection('users').where("email", "==", email).get().then(DocumentSnapshot => {
-                DocumentSnapshot.docs.forEach(doc => {
-                    setCards(doc.data().tarjetas.map(tar => tar.data))
-                })
-            });
-        }
-        fetchData();
     }, [])
     return (
         <div className="App">
-            {console.log("ESTEEEE : "+docid)}
+            {console.log("ESTEEEE : " + docid)}
             {user ? (
                 <>
                     <Home
