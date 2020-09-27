@@ -11,6 +11,9 @@ const App = () => {
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [hasAccount, setHasAccount] = useState(false);
+    const [cards, setCards] = useState([]);
+    const [docid, setDocid] = useState('');
+    const tarjetasdb = [];
     const clearInputs = () => {
         setEmail("");
         setPassword("");
@@ -19,15 +22,13 @@ const App = () => {
         setEmailError("");
         setPasswordError("");
     }
-    const handleLogin = () => {
+    const handleLogin = async () => {
         document.getElementById("titulo").innerHTML = "Iniciar Sesion";
         clearErrors();
-        fire
+        await fire
             .auth()
             .signInWithEmailAndPassword(email, password)
-            .then(async => {
-                console.log(fire.auth().currentUser.tarjetas)
-            }).catch((err) => {
+            .catch((err) => {
                 switch (err.code) {
                     case "auth/invalid-email":
                     case "auth/user-disabled":
@@ -39,8 +40,37 @@ const App = () => {
                         break;
                 }
                 alert(err)
+            }).then(() => {
+                cargarTarjetas();
             })
-        // setUID(fire.auth().currentUser.uid);
+    }
+    const cargarTarjetas = () => {
+        let x = 1;
+        fire.firestore().collection('users').where("email", "==", email).get().then(DocumentSnapshot => {
+            DocumentSnapshot.docs.forEach(doc => {
+                if (doc.exists) {
+                    doc.data().tarjetas.forEach(tar => {
+                        if (tar != null) {
+                            const name = tar.name;
+                            const number = tar.number;
+                            const expiry = tar.expiry;
+                            const cvc = tar.cvc;
+                            const obj = {
+                                'name': name,
+                                'expiry': expiry,
+                                'number': number,
+                                'cvc': cvc
+                            }
+                            tarjetasdb.push(obj);
+                        }
+                    });
+                    setCards(tarjetasdb);
+                    setDocid(doc.id)
+                } else {
+                    alert('no existeeee');
+                }
+            })
+        });
     }
     const handleSignup = async () => {
         document.getElementById("titulo").innerHTML = "Crear Cuenta";
@@ -60,6 +90,7 @@ const App = () => {
                     tarjetas: [],
                     isverify: false,
                 });
+                cargarTarjetas();
             })
             .catch((err) => {
                 switch (err.code) {
@@ -82,6 +113,7 @@ const App = () => {
             if (user) {
                 clearInputs();
                 setUser(user);
+                cargarTarjetas();
             } else {
                 setUser("");
                 // localStorage.removeItem('user');
@@ -90,32 +122,45 @@ const App = () => {
     }
     useEffect(() => {
         authListener();
+        const fetchData = async () => {
+            fire.firestore().collection('users').where("email", "==", email).get().then(DocumentSnapshot => {
+                DocumentSnapshot.docs.forEach(doc => {
+                    setCards(doc.data().tarjetas.map(tar => tar.data))
+                })
+            });
+        }
+        fetchData();
     }, [])
     return (
         <div className="App">
-            {console.log(fire.firestore().doc(`/users/${user.uid}`).get())}
+            {console.log("ESTEEEE : "+docid)}
             {user ? (
-                <Home
-                    uid={user.uid}
-                    email={user.email}
-                    tarjetas={
-                        []
-                    }
-                />
-            ) : (
-                    <Login
-                        email={email}
-                        setEmail={setEmail}
-                        password={password}
-                        setPassword={setPassword}
-                        handleLogin={handleLogin}
-                        handleSignup={handleSignup}
-                        hasAccount={hasAccount}
-                        setHasAccount={setHasAccount}
-                        emailError={emailError}
-                        passwordError={passwordError}
+                <>
+                    <Home
+                        uid={user.uid}
+                        email={user.email}
+                        tarjetas={cards}
+                        docid={docid}
                     />
+                </>
+            ) : (
+                    <>
+                        <Login
+                            email={email}
+                            setEmail={setEmail}
+                            password={password}
+                            setPassword={setPassword}
+                            handleLogin={handleLogin}
+                            handleSignup={handleSignup}
+                            hasAccount={hasAccount}
+                            setHasAccount={setHasAccount}
+                            emailError={emailError}
+                            passwordError={passwordError}
+                        />
+                        {console.log("ANTESS: " + tarjetasdb)}
+                    </>
                 )}
+
 
         </div>
     );
