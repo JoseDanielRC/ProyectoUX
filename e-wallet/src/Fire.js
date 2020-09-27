@@ -1,5 +1,5 @@
-import firebase from 'firebase'
-import '@firebase/firestore'
+import * as firebase from 'firebase';
+import 'firebase/firestore';
 const firebaseConfig = {
     apiKey: "AIzaSyBxPpR8XFIMkMyGGyWS7vDWHXx222pzDw4",
     authDomain: "e-wallet-51d51.firebaseapp.com",
@@ -14,4 +14,5 @@ const fire = firebase.initializeApp(firebaseConfig);
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
 export const storage = firebase.storage();
+export const f = firebase;
 export default fire;
