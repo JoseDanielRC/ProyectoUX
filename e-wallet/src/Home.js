@@ -1,62 +1,10 @@
 import React, { Component } from 'react';
 import fire from './Fire';
 import Tarjeta from './Tarjeta';
+import App from './App.js';
 import Card from './Card';
 import "./Box.css";
 import Amigos from './Amigos';
-const cardInfo = [
-    {
-        number: "3786486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    },
-    {
-        number: "4286486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    },
-    {
-        number: "5586486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    }, {
-        number: "3786486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    },
-    {
-        number: "4286486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    },
-    {
-        number: "5586486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    }, {
-        number: "3786486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    },
-    {
-        number: "4286486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    },
-    {
-        number: "5586486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    }];
 const renderCard = (card, index) => {
     return (
         <Card
@@ -70,17 +18,45 @@ const renderCard = (card, index) => {
         />
     );
 };
+const tarjetasdb = [];
+const cargarTarjetas = (email) => {
+    let x = 1;
+    fire.firestore().collection('users').where("email", "==", email).get().then(DocumentSnapshot => {
+        DocumentSnapshot.docs.forEach(doc => {
+            if (doc.exists) {
+                doc.data().tarjetas.forEach(tar => {
+                    if (tar != null) {
+                        const name = tar.name;
+                        const number = tar.number;
+                        const expiry = tar.expiry;
+                        const cvc = tar.cvc;
+                        const obj = {
+                            'name': name,
+                            'expiry': expiry,
+                            'number': number,
+                            'cvc': cvc
+                        }
+                        tarjetasdb.push(obj);
+                    }
+                    console.log("CARGANDO EN HOME: " + tarjetasdb)
+                });
+            } else {
+                alert('no existeeee');
+            }
+        })
+    });
+}
 
 class Home extends Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+        console.log(this.props)
         this.state = {
             showComponent: false,
             shouldShowButton: false,
             showAmigos: false,
-            regresasHome: true,
-            tarjetas: null
+            regresasHome: true
         };
         this.logout = this.logout.bind(this);
         this._onButtonClick = this._onButtonClick.bind(this);
@@ -140,6 +116,7 @@ class Home extends Component {
     render() {
         return (
             <div >
+                {console.log("EN HOME: " + this.props.tarjetas)}
                 <body class={Home.BACK_STYLE}>
                     <div >
                         <form >
@@ -169,8 +146,10 @@ class Home extends Component {
                             </nav>
                             <div style={{ 'padding-top': '30px' }}>
                                 {this.state.shouldShowButton ? (
-
-                                    <Tarjeta />
+                                    <>
+                                        {alert("DOCID EN HOME:" + this.props.docid)}
+                                        <Tarjeta email={this.props.email} id={this.props.uid} docid={this.props.docid} />
+                                    </>
                                 ) : (
                                         null
                                     )}
@@ -181,7 +160,7 @@ class Home extends Component {
                                     <Amigos />
                                 ) : null}
                             </div>
-                            {this.state.regresasHome && (!this.state.shouldShowButton && !this.state.showAmigos) ? <div className="grid">{cardInfo.map(renderCard)}</div> : null}
+                            {this.state.regresasHome && (!this.state.shouldShowButton && !this.state.showAmigos) ? <div className="grid">{this.props.tarjetas.map(renderCard)}</div> : null}
                         </form>
                     </div>
                 </body>
