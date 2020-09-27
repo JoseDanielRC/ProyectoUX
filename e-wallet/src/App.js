@@ -3,6 +3,7 @@ import './App.css';
 import Home from './Home';
 import Login from './Login';
 import fire from './Fire';
+import firestore from './Fire';
 const App = () => {
     const [user, setUser] = useState('');
     const [email, setEmail] = useState('');
@@ -10,7 +11,6 @@ const App = () => {
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [hasAccount, setHasAccount] = useState(false);
-
     const clearInputs = () => {
         setEmail("");
         setPassword("");
@@ -19,13 +19,21 @@ const App = () => {
         setEmailError("");
         setPasswordError("");
     }
+    /*var currentUser = null;
+    var info = {
+        uid: "currentUser.uid",
+        tarjetas: [],
+        email: "currentUser.email"
+    };*/
     const handleLogin = () => {
-        document.getElementById("titulo").innerHTML="Iniciar Sesion";
+        document.getElementById("titulo").innerHTML = "Iniciar Sesion";
         clearErrors();
         fire
             .auth()
             .signInWithEmailAndPassword(email, password)
-            .catch((err) => {
+            .then(async => {
+                console.log(fire.auth().currentUser.tarjetas)
+            }).catch((err) => {
                 switch (err.code) {
                     case "auth/invalid-email":
                     case "auth/user-disabled":
@@ -36,14 +44,29 @@ const App = () => {
                         setPasswordError(err.message);
                         break;
                 }
+                alert(err)
             })
+        // setUID(fire.auth().currentUser.uid);
     }
-    const handleSignup = () => {
-        document.getElementById("titulo").innerHTML="Crear Cuenta";
+    const handleSignup = async () => {
+        document.getElementById("titulo").innerHTML = "Crear Cuenta";
         clearErrors();
-        fire
+        await fire
             .auth()
             .createUserWithEmailAndPassword(email, password)
+            .then(async (result) => {
+                await fire.firestore().collection("users").add({
+                    id: result.user.uid,
+                    email,
+                    password,
+                    URL: "https://moorestown-mall.com/noimage.gif",
+                    description: "",
+                    imgname: "",
+                    isonline: false,
+                    tarjetas: [],
+                    isverify: false,
+                });
+            })
             .catch((err) => {
                 switch (err.code) {
                     case "auth/email-already-in-use":
@@ -55,6 +78,7 @@ const App = () => {
                         break;
                 }
             })
+        //setUID(fire.auth().currentUser.uid);
     }
     const handleLogout = () => {
         fire.auth().signOut()
@@ -75,9 +99,15 @@ const App = () => {
     }, [])
     return (
         <div className="App">
+            {console.log(fire.firestore().doc(`/users/${user.uid}`).get())}
             {user ? (
-                
-                <Home />
+                <Home
+                    uid={user.uid}
+                    email={user.email}
+                    tarjetas={
+                        []
+                    }
+                />
             ) : (
                     <Login
                         email={email}
@@ -92,6 +122,7 @@ const App = () => {
                         passwordError={passwordError}
                     />
                 )}
+
         </div>
     );
 }
