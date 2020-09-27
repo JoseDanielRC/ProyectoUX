@@ -1,81 +1,10 @@
 import React, { Component } from 'react';
 import fire from './Fire';
 import Tarjeta from './Tarjeta';
-import CardSwiper from './CardSwiper.js';
+import App from './App.js';
 import Card from './Card';
 import "./Box.css";
 import Amigos from './Amigos';
-function SubmissionBanner(props) {
-    if (!props.submit) {
-        return null;
-    }
-
-    return (
-        <div >
-            <Tarjeta />
-        </div>
-    );
-}
-function Tarjetas(props) {
-    return (
-        <div >
-            <CardSwiper />
-        </div>
-    );
-}
-const cardInfo = [
-    {
-        number: "3786486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    },
-    {
-        number: "4286486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    },
-    {
-        number: "5586486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    }, {
-        number: "3786486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    },
-    {
-        number: "4286486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    },
-    {
-        number: "5586486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    }, {
-        number: "3786486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    },
-    {
-        number: "4286486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    },
-    {
-        number: "5586486895872356",
-        name: "Jasser Ramos",
-        expiry: "02/23",
-        cvc: "333"
-    }];
 const renderCard = (card, index) => {
     return (
         <Card
@@ -89,10 +18,40 @@ const renderCard = (card, index) => {
         />
     );
 };
+const tarjetasdb = [];
+const cargarTarjetas = (email) => {
+    let x = 1;
+    fire.firestore().collection('users').where("email", "==", email).get().then(DocumentSnapshot => {
+        DocumentSnapshot.docs.forEach(doc => {
+            if (doc.exists) {
+                doc.data().tarjetas.forEach(tar => {
+                    if (tar != null) {
+                        const name = tar.name;
+                        const number = tar.number;
+                        const expiry = tar.expiry;
+                        const cvc = tar.cvc;
+                        const obj = {
+                            'name': name,
+                            'expiry': expiry,
+                            'number': number,
+                            'cvc': cvc
+                        }
+                        tarjetasdb.push(obj);
+                    }
+                    console.log("CARGANDO EN HOME: " + tarjetasdb)
+                });
+            } else {
+                alert('no existeeee');
+            }
+        })
+    });
+}
+
 class Home extends Component {
 
     constructor(props) {
         super(props);
+        console.log(this.props)
         this.state = {
             showComponent: false,
             shouldShowButton: false,
@@ -122,6 +81,7 @@ class Home extends Component {
         }));
     }
     HomeClick() {
+
         this.setState(({
             showComponent: false,
             shouldShowButton: false,
@@ -154,10 +114,9 @@ class Home extends Component {
         };
     }
     render() {
-
         return (
-
             <div >
+                {console.log("EN HOME: " + this.props.tarjetas)}
                 <body class={Home.BACK_STYLE}>
                     <div >
                         <form >
@@ -180,15 +139,17 @@ class Home extends Component {
                                     </ul>
                                     <ul class="navbar-nav">
                                         <li class="nav-item pull-right">
-                                            <a href="#" class="nav-link pull-right" style={{ 'color': 'white' }} onClick={this.logout}><strong>Logout</strong></a>
+                                            <a href="#" class="nav-link pull-right" style={{ 'color': 'white' }} onClick={this.logout}><strong>{this.props.email}   Logout</strong></a>
                                         </li>
                                     </ul>
                                 </div>
                             </nav>
                             <div style={{ 'padding-top': '30px' }}>
                                 {this.state.shouldShowButton ? (
-                                
-                                    <SubmissionBanner />
+                                    <>
+                                        {alert("DOCID EN HOME:" + this.props.docid)}
+                                        <Tarjeta email={this.props.email} id={this.props.uid} docid={this.props.docid} />
+                                    </>
                                 ) : (
                                         null
                                     )}
@@ -199,8 +160,7 @@ class Home extends Component {
                                     <Amigos />
                                 ) : null}
                             </div>
-                            {this.state.regresasHome && (!this.state.shouldShowButton && !this.state.showAmigos) ? <div className="grid">{cardInfo.map(renderCard)}</div> : null}
-                            <SubmissionBanner submit={this.state.shouldShowButton} />
+                            {this.state.regresasHome && (!this.state.shouldShowButton && !this.state.showAmigos) ? <div className="grid">{this.props.tarjetas.map(renderCard)}</div> : null}
                         </form>
                     </div>
                 </body>

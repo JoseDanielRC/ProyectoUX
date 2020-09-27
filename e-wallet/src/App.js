@@ -3,22 +3,17 @@ import './App.css';
 import Home from './Home';
 import Login from './Login';
 import fire from './Fire';
+import firestore from './Fire';
 const App = () => {
-
-    /*constructor() {
-        super();
-        this.state = ({
-            username: null,
-        });
-        this.authListener = this.authListener.bind(this);
-    }*/
     const [user, setUser] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [hasAccount, setHasAccount] = useState(false);
-
+    const [cards, setCards] = useState([]);
+    const [docid, setDocid] = useState('');
+    const tarjetasdb = [];
     const clearInputs = () => {
         setEmail("");
         setPassword("");
@@ -27,10 +22,10 @@ const App = () => {
         setEmailError("");
         setPasswordError("");
     }
-    const handleLogin = () => {
-        document.getElementById("titulo").innerHTML="Iniciar Sesion";
+    const handleLogin = async () => {
+        document.getElementById("titulo").innerHTML = "Iniciar Sesion";
         clearErrors();
-        fire
+        await fire
             .auth()
             .signInWithEmailAndPassword(email, password)
             .catch((err) => {
@@ -44,14 +39,59 @@ const App = () => {
                         setPasswordError(err.message);
                         break;
                 }
+                alert(err)
+            }).then(() => {
+                cargarTarjetas();
             })
     }
-    const handleSignup = () => {
-        document.getElementById("titulo").innerHTML="Crear Cuenta";
+    const cargarTarjetas = () => {
+        let x = 1;
+        fire.firestore().collection('users').where("email", "==", email).get().then(DocumentSnapshot => {
+            DocumentSnapshot.docs.forEach(doc => {
+                if (doc.exists) {
+                    doc.data().tarjetas.forEach(tar => {
+                        if (tar != null) {
+                            const name = tar.name;
+                            const number = tar.number;
+                            const expiry = tar.expiry;
+                            const cvc = tar.cvc;
+                            const obj = {
+                                'name': name,
+                                'expiry': expiry,
+                                'number': number,
+                                'cvc': cvc
+                            }
+                            tarjetasdb.push(obj);
+                        }
+                    });
+                    setCards(tarjetasdb);
+                    setDocid(doc.id)
+                } else {
+                    alert('no existeeee');
+                }
+            })
+        });
+    }
+    const handleSignup = async () => {
+        document.getElementById("titulo").innerHTML = "Crear Cuenta";
         clearErrors();
-        fire
+        await fire
             .auth()
             .createUserWithEmailAndPassword(email, password)
+            .then(async (result) => {
+                await fire.firestore().collection("users").add({
+                    id: result.user.uid,
+                    email,
+                    password,
+                    URL: "https://moorestown-mall.com/noimage.gif",
+                    description: "",
+                    imgname: "",
+                    isonline: false,
+                    tarjetas: [],
+                    isverify: false,
+                });
+                cargarTarjetas();
+            })
             .catch((err) => {
                 switch (err.code) {
                     case "auth/email-already-in-use":
@@ -63,6 +103,7 @@ const App = () => {
                         break;
                 }
             })
+        //setUID(fire.auth().currentUser.uid);
     }
     const handleLogout = () => {
         fire.auth().signOut()
@@ -72,6 +113,7 @@ const App = () => {
             if (user) {
                 clearInputs();
                 setUser(user);
+                cargarTarjetas();
             } else {
                 setUser("");
                 // localStorage.removeItem('user');
@@ -80,26 +122,46 @@ const App = () => {
     }
     useEffect(() => {
         authListener();
+        const fetchData = async () => {
+            fire.firestore().collection('users').where("email", "==", email).get().then(DocumentSnapshot => {
+                DocumentSnapshot.docs.forEach(doc => {
+                    setCards(doc.data().tarjetas.map(tar => tar.data))
+                })
+            });
+        }
+        fetchData();
     }, [])
     return (
         <div className="App">
+            {console.log("ESTEEEE : "+docid)}
             {user ? (
-                
-                <Home />
-            ) : (
-                    <Login
-                        email={email}
-                        setEmail={setEmail}
-                        password={password}
-                        setPassword={setPassword}
-                        handleLogin={handleLogin}
-                        handleSignup={handleSignup}
-                        hasAccount={hasAccount}
-                        setHasAccount={setHasAccount}
-                        emailError={emailError}
-                        passwordError={passwordError}
+                <>
+                    <Home
+                        uid={user.uid}
+                        email={user.email}
+                        tarjetas={cards}
+                        docid={docid}
                     />
+                </>
+            ) : (
+                    <>
+                        <Login
+                            email={email}
+                            setEmail={setEmail}
+                            password={password}
+                            setPassword={setPassword}
+                            handleLogin={handleLogin}
+                            handleSignup={handleSignup}
+                            hasAccount={hasAccount}
+                            setHasAccount={setHasAccount}
+                            emailError={emailError}
+                            passwordError={passwordError}
+                        />
+                        {console.log("ANTESS: " + tarjetasdb)}
+                    </>
                 )}
+
+
         </div>
     );
 }
