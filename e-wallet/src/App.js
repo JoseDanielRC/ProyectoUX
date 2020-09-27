@@ -19,12 +19,6 @@ const App = () => {
         setEmailError("");
         setPasswordError("");
     }
-    /*var currentUser = null;
-    var info = {
-        uid: "currentUser.uid",
-        tarjetas: [],
-        email: "currentUser.email"
-    };*/
     const handleLogin = () => {
         document.getElementById("titulo").innerHTML = "Iniciar Sesion";
         clearErrors();

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import fire from './Fire';
 import Tarjeta from './Tarjeta';
-import CardSwiper from './CardSwiper.js';
 import Card from './Card';
 import "./Box.css";
 import Amigos from './Amigos';
