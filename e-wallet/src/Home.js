@@ -5,6 +5,7 @@ import App from './App.js';
 import Card from './Card';
 import "./Box.css";
 import Amigos from './Amigos';
+import { browserHistory } from 'react-router';
 const renderCard = (card, index) => {
     return (
         <Card
@@ -38,7 +39,6 @@ const cargarTarjetas = (email) => {
                         }
                         tarjetasdb.push(obj);
                     }
-                    console.log("CARGANDO EN HOME: " + tarjetasdb)
                 });
             } else {
                 alert('no existeeee');
@@ -51,7 +51,6 @@ class Home extends Component {
 
     constructor(props) {
         super(props);
-        console.log(this.props)
         this.state = {
             showComponent: false,
             shouldShowButton: false,
@@ -62,6 +61,18 @@ class Home extends Component {
         this._onButtonClick = this._onButtonClick.bind(this);
         this.HomeClick = this.HomeClick.bind(this);
         this._onButtonClick2 = this._onButtonClick2.bind(this);
+        this.onUnload = this.onUnload.bind(this);
+    }
+    componentDidMount() {
+        window.addEventListener('onbeforeunload', this.onUnload);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('onbeforeunload', this.onUnload);
+    }
+
+    onUnload() {
+        browserHistory.push('/');
     }
 
     _onButtonClick() {

@@ -23,18 +23,16 @@ const Tarjeta = (props) => {
     await sleep(300)
     alert("NUMERO CARD: " + cardInfo.name)
     alert("DOCID TARJETA: " + docid)
-    /* const admin = require('firebase-admin');
-     window.alert(record.number)
-     await fire.firebase().collection('users').doc("WSYsDftbvGCzsjQ6YAji").update({
-       tarjetas: admin.firestore.FieldValue.arrayUnion(cardInfo)
-     });
-     fire.firestore().collection('users').where("email", "==", this.props.email).get().then(DocumentSnapshot => {
-   
-       DocumentSnapshot.doc("WSYsDftbvGCzsjQ6YAji").update({
-         tarjetas: admin.firestore.FieldValue.arrayUnion(cardInfo)
-       })
-     });
-     alert("agregado")*/
+    const admin = require('firebase-admin');
+    /*await fire.firebase().collection('users').doc(docid).update({
+      tarjetas: admin.firestore.FieldValue.arrayUnion(cardInfo)
+    });*/
+    fire.firestore().collection('users').where("id", "==", id).get().then(DocumentSnapshot => {
+      DocumentSnapshot.doc("WSYsDftbvGCzsjQ6YAji").update({
+        tarjetas: admin.firestore.FieldValue.arrayUnion(cardInfo)
+      })
+    });
+    alert("agregado")
   }
   return (
     <div>
