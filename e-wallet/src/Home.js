@@ -126,9 +126,9 @@ class Home extends Component {
             height: '100%'
         };
     }
-    
+
     render() {
-        
+
         return (
             <div >
                 <body class={Home.BACK_STYLE}>
@@ -136,23 +136,23 @@ class Home extends Component {
                         <form >
                             <nav class="navbar navbar-expand-md navbar-dark bg-light sticky-top" style={Home.NAV_STYLE}>
                                 <a class="navbar-brand" href="#">E-Wallet</a>
-                    
-                                    <ul class="navbar-nav">
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#" style={{ 'color': 'white' }} onClick={this.HomeClick}>Home <span class="sr-only">(current)</span></a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#" style={{ 'color': 'white' }} style={{ 'color': 'white' }} onClick={this._onButtonClick}>Agregar Tarjeta</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#" style={{ 'color': 'white' }} onClick={this._onButtonClick2}>Amigos</a>
-                                        </li>
-                                    </ul>
-                                    <ul class="navbar-nav">
-                                        <li class="nav-item pull-right">
-                                            <a href="#" class="nav-link pull-right" style={{ 'color': 'white' }} onClick={this.logout}><strong>{this.props.email}   Logout</strong></a>
-                                        </li>
-                                    </ul>
+
+                                <ul class="navbar-nav">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#" style={{ 'color': 'white' }} onClick={this.HomeClick}>Home <span class="sr-only">(current)</span></a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#" style={{ 'color': 'white' }} style={{ 'color': 'white' }} onClick={this._onButtonClick}>Agregar Tarjeta</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#" style={{ 'color': 'white' }} onClick={this._onButtonClick2}>Amigos</a>
+                                    </li>
+                                </ul>
+                                <ul class="navbar-nav" style={{ marginLeft: "auto" }}>
+                                    <li class="nav-item " >
+                                        <a href="#" class="nav-link" style={{ color: "white" }} onClick={this.logout}><strong>{this.props.email}   Logout</strong></a>
+                                    </li>
+                                </ul>
                             </nav>
                             <div style={{ 'padding-top': '30px' }}>
                                 {this.state.shouldShowButton ? (
