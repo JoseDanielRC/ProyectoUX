@@ -26,7 +26,7 @@ function App() {
 
 function Chat() {
     const messagesRef = fire.firestore().collection('messages');
-    const query = messagesRef.orderBy('createdAt').limit(25);
+    const query = messagesRef.orderBy('createdAt');
     const [messages] = useCollectionData(query, { idField: 'id' });
     const [formValue, setFormValue] = useState('');
 
@@ -45,16 +45,16 @@ function Chat() {
     return (
 
         <>
-            <div>
-                <div >
+            <div >
+                <div className='chat-box'>
                     {messages && messages.map(msg => <ChatMessage key={msg.id} message={msg} email={fire.auth().currentUser.email} />)}
-                    <form color="black" onSubmit={sendMessage}>
-                        <div>
-                            <input value={formValue} onChange={(e) => setFormValue(e.target.value)} />
-                            <button class="btn btn-secondary btn-rounded" type="submit">Send</button>
-                        </div>
-                    </form>
                 </div>
+                <form class="input" color="black" onSubmit={sendMessage}>
+                    <div >
+                        <input value={formValue} onChange={(e) => setFormValue(e.target.value)} /><></>
+                        <button class="btn btn-default btn-rounded " style={{ 'width': '100px', 'color': 'white', 'background-color': '#603bbb' }} type="submit">Send</button>
+                    </div>
+                </form>
             </div>
         </>
     )
@@ -65,12 +65,12 @@ function ChatMessage(props) {
     const { text, uid, email } = props.message;
     const messageClass = uid === fire.auth().currentUser.uid ? 'sent' : 'recieved';
     return (
-        <div className="messages-box">
-            <div className="img-profile">
+        <div >
+            <div >
                 <img className="avatar" src="https://www.iconfinder.com/data/icons/fillies-small/64/id-card-512.png" alt="" /> <strong>{email}</strong>
             </div>
-            <div className="message-text">
-                <p>{text}</p>
+            <div  >
+                <p className="text-chat">{text}</p>
             </div>
 
         </div>

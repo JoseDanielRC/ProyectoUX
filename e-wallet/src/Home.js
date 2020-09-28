@@ -20,32 +20,7 @@ const renderCard = (card, index) => {
     );
 };
 const tarjetasdb = [];
-const cargarTarjetas = (email) => {
-    let x = 1;
-    fire.firestore().collection('users').where("email", "==", email).get().then(DocumentSnapshot => {
-        DocumentSnapshot.docs.forEach(doc => {
-            if (doc.exists) {
-                doc.data().tarjetas.forEach(tar => {
-                    if (tar != null) {
-                        const name = tar.name;
-                        const number = tar.number;
-                        const expiry = tar.expiry;
-                        const cvc = tar.cvc;
-                        const obj = {
-                            'name': name,
-                            'expiry': expiry,
-                            'number': number,
-                            'cvc': cvc
-                        }
-                        tarjetasdb.push(obj);
-                    }
-                });
-            } else {
-                alert('no existeeee');
-            }
-        })
-    });
-}
+
 
 class Home extends Component {
 
@@ -62,9 +37,9 @@ class Home extends Component {
         this.HomeClick = this.HomeClick.bind(this);
         this._onButtonClick2 = this._onButtonClick2.bind(this);
         this.onUnload = this.onUnload.bind(this);
+        this.cargarTarjetas = this.cargarTarjetas.bind(this);
     }
     componentDidMount() {
-        window.addEventListener('onbeforeunload', this.onUnload);
     }
 
     componentWillUnmount() {
@@ -72,7 +47,7 @@ class Home extends Component {
     }
 
     onUnload() {
-        browserHistory.push('/');
+
     }
 
     _onButtonClick() {
@@ -82,7 +57,34 @@ class Home extends Component {
             showAmigos: false,
         }));
     }
-
+    cargarTarjetas() {
+        fire.firestore().collection('users').where("id", "==", this.props.uid).get().then(DocumentSnapshot => {
+            DocumentSnapshot.docs.forEach(doc => {
+                if (doc.data().id == this.props.uid) {
+                    if (doc.exists) {
+                        doc.data().tarjetas.forEach(tar => {
+                            if (tar != null) {
+                                const name = tar.name;
+                                const number = tar.number;
+                                const expiry = tar.expiry;
+                                const cvc = tar.cvc;
+                                const obj = {
+                                    'name': name,
+                                    'expiry': expiry,
+                                    'number': number,
+                                    'cvc': cvc
+                                }
+                                tarjetasdb.push(obj);
+                            }
+                        });
+                        console.log("1");
+                    } else {
+                        alert('no existeeee');
+                    }
+                }
+            })
+        });
+    }
     _onButtonClick2() {
         this.setState(prevState => ({
             showComponent: true,
@@ -92,14 +94,14 @@ class Home extends Component {
         }));
     }
     HomeClick() {
-
+        this.cargarTarjetas();
         this.setState(({
             showComponent: false,
             shouldShowButton: false,
             showAmigos: false,
             regresasHome: true
         }));
-
+        window.location.reload(false);
     }
     logout() {
         fire.auth().signOut();
@@ -124,41 +126,37 @@ class Home extends Component {
             height: '100%'
         };
     }
+
     render() {
+
         return (
             <div >
-                {console.log("EN HOME: " + this.props.tarjetas)}
                 <body class={Home.BACK_STYLE}>
                     <div >
                         <form >
-                            <nav class="navbar navbar-expand-lg navbar-fixed-top navbar-dark bg-light" style={Home.NAV_STYLE}>
+                            <nav class="navbar navbar-expand-md navbar-dark bg-light sticky-top" style={Home.NAV_STYLE}>
                                 <a class="navbar-brand" href="#">E-Wallet</a>
-                                <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#navbarSupportedContent" aria-expanded="false" aria-controls="navbarSupportedContent" aria-label="Toggle navigation">
-                                    <span class="navbar-toggler-icon"></span>
-                                </button>
-                                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                                    <ul class="navbar-nav mr-auto">
-                                        <li class="nav-item active">
-                                            <a class="nav-link" href="#" onClick={this.HomeClick}>Home <span class="sr-only">(current)</span></a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#" onClick={this._onButtonClick}>Agregar Tarjeta</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#" onClick={this._onButtonClick2}>Amigos</a>
-                                        </li>
-                                    </ul>
-                                    <ul class="navbar-nav">
-                                        <li class="nav-item pull-right">
-                                            <a href="#" class="nav-link pull-right" style={{ 'color': 'white' }} onClick={this.logout}><strong>{this.props.email}   Logout</strong></a>
-                                        </li>
-                                    </ul>
-                                </div>
+
+                                <ul class="navbar-nav">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#" style={{ 'color': 'white' }} onClick={this.HomeClick}>Home <span class="sr-only">(current)</span></a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#" style={{ 'color': 'white' }} style={{ 'color': 'white' }} onClick={this._onButtonClick}>Agregar Tarjeta</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#" style={{ 'color': 'white' }} onClick={this._onButtonClick2}>Amigos</a>
+                                    </li>
+                                </ul>
+                                <ul class="navbar-nav" style={{ marginLeft: "auto" }}>
+                                    <li class="nav-item " >
+                                        <a href="#" class="nav-link" style={{ color: "white" }} onClick={this.logout}><strong>{this.props.email}   Logout</strong></a>
+                                    </li>
+                                </ul>
                             </nav>
                             <div style={{ 'padding-top': '30px' }}>
                                 {this.state.shouldShowButton ? (
                                     <>
-                                        {alert("DOCID EN HOME:" + this.props.docid)}
                                         <Tarjeta email={this.props.email} id={this.props.uid} docid={this.props.docid} />
                                     </>
                                 ) : (

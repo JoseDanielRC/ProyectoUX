@@ -4,9 +4,11 @@ import './Amigos.css';
 function Top() {
     return (
         <>
-            <div className="brand">
-                Enviar mensajes a sus amigos
-			</div>
+            <div >
+                <h1 style={{ 'text-align': 'center', 'justify-content': 'center' }}>
+                    Enviar mensajes a sus amigos
+                </h1>
+            </div>
         </>
     )
 }
