@@ -115,7 +115,6 @@ const App = () => {
                 tarjetasdb = [];
                 clearInputs();
                 setUser(user);
-                alert("UID: " + user.uid);
                 fire.firestore().collection('users').where("id", "==", user.uid).get().then(DocumentSnapshot => {
                     DocumentSnapshot.docs.forEach(doc => {
                         if (doc.exists) {
@@ -135,7 +134,7 @@ const App = () => {
                                 }
                             });
                             setCards(tarjetasdb);
-                            setDocid(doc.id)
+                            setDocid(doc.id);
                         } else {
                             alert('no existeeee');
                         }
@@ -143,7 +142,6 @@ const App = () => {
                 });
             } else {
                 setUser("");
-                alert("nel");
                 // localStorage.removeItem('user');
             }
         })
@@ -153,14 +151,15 @@ const App = () => {
     }, [])
     return (
         <div className="App">
-            {console.log("ESTEEEE : " + docid)}
             {user ? (
                 <>
                     <Home
+                        user={user}
                         uid={user.uid}
                         email={user.email}
                         tarjetas={cards}
                         docid={docid}
+                        useEffect={useEffect}
                     />
                 </>
             ) : (
@@ -177,7 +176,6 @@ const App = () => {
                             emailError={emailError}
                             passwordError={passwordError}
                         />
-                        {console.log("ANTESS: " + tarjetasdb)}
                     </>
                 )}
 

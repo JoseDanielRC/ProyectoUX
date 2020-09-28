@@ -19,20 +19,46 @@ const Tarjeta = (props) => {
     id,
     docid,
   } = props;
+
   const onSubmit = async (cardInfo) => {
     await sleep(300)
-    alert("NUMERO CARD: " + cardInfo.name)
-    alert("DOCID TARJETA: " + docid)
-    const admin = require('firebase-admin');
-    /*await fire.firebase().collection('users').doc(docid).update({
-      tarjetas: admin.firestore.FieldValue.arrayUnion(cardInfo)
-    });*/
-    fire.firestore().collection('users').where("id", "==", id).get().then(DocumentSnapshot => {
-      DocumentSnapshot.doc("WSYsDftbvGCzsjQ6YAji").update({
-        tarjetas: admin.firestore.FieldValue.arrayUnion(cardInfo)
+    const tarjetasdb = [];
+    await fire.firestore().collection('users').where("email", "==", email).get().then(DocumentSnapshot => {
+      DocumentSnapshot.docs.forEach(doc => {
+        if (doc.exists) {
+          doc.data().tarjetas.forEach(tar => {
+            if (tar != null) {
+              const name = tar.name;
+              const number = tar.number;
+              const expiry = tar.expiry;
+              const cvc = tar.cvc;
+              const obj = {
+                'name': name,
+                'expiry': expiry,
+                'number': number,
+                'cvc': cvc
+              }
+              tarjetasdb.push(obj);
+
+            }
+          });
+          tarjetasdb.push(cardInfo);
+          console.log(cardInfo);
+          fire.firestore().collection("users").doc(docid).set({
+            URL: "https://moorestown-mall.com/noimage.gif",
+            description: "",
+            email: email,
+            id: id,
+            imgname: "",
+            isonline: false,
+            isverify: false,
+            password: doc.data().password,
+            tarjetas: tarjetasdb
+          })
+          alert("Tarjeta agregada exit")
+        }
       })
     });
-    alert("agregado")
   }
   return (
     <div>

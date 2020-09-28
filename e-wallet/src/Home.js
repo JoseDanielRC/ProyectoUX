@@ -20,32 +20,7 @@ const renderCard = (card, index) => {
     );
 };
 const tarjetasdb = [];
-const cargarTarjetas = (email) => {
-    let x = 1;
-    fire.firestore().collection('users').where("email", "==", email).get().then(DocumentSnapshot => {
-        DocumentSnapshot.docs.forEach(doc => {
-            if (doc.exists) {
-                doc.data().tarjetas.forEach(tar => {
-                    if (tar != null) {
-                        const name = tar.name;
-                        const number = tar.number;
-                        const expiry = tar.expiry;
-                        const cvc = tar.cvc;
-                        const obj = {
-                            'name': name,
-                            'expiry': expiry,
-                            'number': number,
-                            'cvc': cvc
-                        }
-                        tarjetasdb.push(obj);
-                    }
-                });
-            } else {
-                alert('no existeeee');
-            }
-        })
-    });
-}
+
 
 class Home extends Component {
 
@@ -62,9 +37,9 @@ class Home extends Component {
         this.HomeClick = this.HomeClick.bind(this);
         this._onButtonClick2 = this._onButtonClick2.bind(this);
         this.onUnload = this.onUnload.bind(this);
+        this.cargarTarjetas = this.cargarTarjetas.bind(this);
     }
     componentDidMount() {
-        window.addEventListener('onbeforeunload', this.onUnload);
     }
 
     componentWillUnmount() {
@@ -72,7 +47,7 @@ class Home extends Component {
     }
 
     onUnload() {
-        browserHistory.push('/');
+
     }
 
     _onButtonClick() {
@@ -82,7 +57,34 @@ class Home extends Component {
             showAmigos: false,
         }));
     }
-
+    cargarTarjetas() {
+        fire.firestore().collection('users').where("id", "==", this.props.uid).get().then(DocumentSnapshot => {
+            DocumentSnapshot.docs.forEach(doc => {
+                if (doc.data().id == this.props.uid) {
+                    if (doc.exists) {
+                        doc.data().tarjetas.forEach(tar => {
+                            if (tar != null) {
+                                const name = tar.name;
+                                const number = tar.number;
+                                const expiry = tar.expiry;
+                                const cvc = tar.cvc;
+                                const obj = {
+                                    'name': name,
+                                    'expiry': expiry,
+                                    'number': number,
+                                    'cvc': cvc
+                                }
+                                tarjetasdb.push(obj);
+                            }
+                        });
+                        console.log("1");
+                    } else {
+                        alert('no existeeee');
+                    }
+                }
+            })
+        });
+    }
     _onButtonClick2() {
         this.setState(prevState => ({
             showComponent: true,
@@ -92,14 +94,14 @@ class Home extends Component {
         }));
     }
     HomeClick() {
-
+        this.cargarTarjetas();
         this.setState(({
             showComponent: false,
             shouldShowButton: false,
             showAmigos: false,
             regresasHome: true
         }));
-
+        window.location.reload(false);
     }
     logout() {
         fire.auth().signOut();
@@ -124,10 +126,11 @@ class Home extends Component {
             height: '100%'
         };
     }
+    
     render() {
+        
         return (
             <div >
-                {console.log("EN HOME: " + this.props.tarjetas)}
                 <body class={Home.BACK_STYLE}>
                     <div >
                         <form >
@@ -158,7 +161,6 @@ class Home extends Component {
                             <div style={{ 'padding-top': '30px' }}>
                                 {this.state.shouldShowButton ? (
                                     <>
-                                        {alert("DOCID EN HOME:" + this.props.docid)}
                                         <Tarjeta email={this.props.email} id={this.props.uid} docid={this.props.docid} />
                                     </>
                                 ) : (
