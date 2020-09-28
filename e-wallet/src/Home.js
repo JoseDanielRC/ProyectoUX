@@ -134,21 +134,18 @@ class Home extends Component {
                 <body class={Home.BACK_STYLE}>
                     <div >
                         <form >
-                            <nav class="navbar navbar-expand-lg navbar-fixed-top navbar-dark bg-light" style={Home.NAV_STYLE}>
+                            <nav class="navbar navbar-expand-md navbar-dark bg-light sticky-top" style={Home.NAV_STYLE}>
                                 <a class="navbar-brand" href="#">E-Wallet</a>
-                                <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#navbarSupportedContent" aria-expanded="false" aria-controls="navbarSupportedContent" aria-label="Toggle navigation">
-                                    <span class="navbar-toggler-icon"></span>
-                                </button>
-                                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                                    <ul class="navbar-nav mr-auto">
-                                        <li class="nav-item active">
-                                            <a class="nav-link" href="#" onClick={this.HomeClick}>Home <span class="sr-only">(current)</span></a>
+                    
+                                    <ul class="navbar-nav">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#" style={{ 'color': 'white' }} onClick={this.HomeClick}>Home <span class="sr-only">(current)</span></a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="#" onClick={this._onButtonClick}>Agregar Tarjeta</a>
+                                            <a class="nav-link" href="#" style={{ 'color': 'white' }} style={{ 'color': 'white' }} onClick={this._onButtonClick}>Agregar Tarjeta</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="#" onClick={this._onButtonClick2}>Amigos</a>
+                                            <a class="nav-link" href="#" style={{ 'color': 'white' }} onClick={this._onButtonClick2}>Amigos</a>
                                         </li>
                                     </ul>
                                     <ul class="navbar-nav">
@@ -156,7 +153,6 @@ class Home extends Component {
                                             <a href="#" class="nav-link pull-right" style={{ 'color': 'white' }} onClick={this.logout}><strong>{this.props.email}   Logout</strong></a>
                                         </li>
                                     </ul>
-                                </div>
                             </nav>
                             <div style={{ 'padding-top': '30px' }}>
                                 {this.state.shouldShowButton ? (
