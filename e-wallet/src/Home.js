@@ -127,33 +127,11 @@ class Home extends Component {
     render() {
         return (
             <div >
-                <nav class="navbar navbar-inverse">
-                    <div class="container-fluid">
-                        <div class="navbar-header">
-                            <a class="navbar-brand" href="#">WebSiteName</a>
-                        </div>
-                        <ul class="nav navbar-nav">
-                            <li class="active"><a href="#">Home</a></li>
-                            <li class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Page 1
-        <span class="caret"></span></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#">Page 1-1</a></li>
-                                    <li><a href="#">Page 1-2</a></li>
-                                    <li><a href="#">Page 1-3</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="#">Page 2</a></li>
-                            <li><a href="#">Page 3</a></li>
-                        </ul>
-                    </div>
-                </nav>
                 {console.log("EN HOME: " + this.props.tarjetas)}
-                <body >
+                <body class={Home.BACK_STYLE}>
                     <div >
                         <form >
-
-                            {/*<nav class="navbar navbar-inverse" style={Home.NAV_STYLE}>
+                            <nav class="navbar navbar-expand-lg navbar-fixed-top navbar-dark bg-light" style={Home.NAV_STYLE}>
                                 <a class="navbar-brand" href="#">E-Wallet</a>
                                 <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#navbarSupportedContent" aria-expanded="false" aria-controls="navbarSupportedContent" aria-label="Toggle navigation">
                                     <span class="navbar-toggler-icon"></span>
@@ -176,7 +154,7 @@ class Home extends Component {
                                         </li>
                                     </ul>
                                 </div>
-                            </nav>*/}
+                            </nav>
                             <div style={{ 'padding-top': '30px' }}>
                                 {this.state.shouldShowButton ? (
                                     <>
